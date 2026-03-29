@@ -1,15 +1,14 @@
 """
 data/loader.py
 ==============
-Responsible solely for reading the raw .dat files from disk and returning
-tidy DataFrames. No transformation logic lives here.
+Reads raw .dat files from disk and returns tidy DataFrames.
 """
 
 from __future__ import annotations
 
 import logging
-from pathlib import Path
 from dataclasses import dataclass
+from pathlib import Path
 
 import pandas as pd
 
@@ -18,7 +17,6 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class RawDataset:
-    """Container for the three raw MovieLens tables."""
     ratings: pd.DataFrame
     movies:  pd.DataFrame
     users:   pd.DataFrame
@@ -26,20 +24,14 @@ class RawDataset:
 
 class MovieLensLoader:
     """
-    Loads the MovieLens 1M dataset from a directory that contains
+    Loads the MovieLens 1M dataset from a directory containing
     ratings.dat, movies.dat, and users.dat.
-
-    Parameters
-    ----------
-    data_dir : str | Path
-        Directory that holds the three .dat files.
     """
 
     RATINGS_COLS = ["user_id", "movie_id", "rating", "timestamp"]
     MOVIES_COLS  = ["movie_id", "title", "genres"]
     USERS_COLS   = ["user_id", "gender", "age", "occupation", "zip_code"]
 
-    # Occupation labels from the README
     OCCUPATION_MAP = {
         0: "other/not specified", 1: "academic/educator", 2: "artist",
         3: "clerical/admin", 4: "college/grad student", 5: "customer service",
@@ -57,40 +49,22 @@ class MovieLensLoader:
 
     def __init__(self, data_dir: str | Path):
         self.data_dir = Path(data_dir)
-        self._validate_dir()
-
-    # ------------------------------------------------------------------
-    # Public API
-    # ------------------------------------------------------------------
+        missing = [f for f in ["ratings.dat", "movies.dat", "users.dat"]
+                   if not (self.data_dir / f).exists()]
+        if missing:
+            raise FileNotFoundError(f"Missing files in {self.data_dir}: {missing}")
 
     def load(self) -> RawDataset:
-        """Load all three files and return a RawDataset."""
-        logger.info("Loading MovieLens data from %s", self.data_dir)
         ratings = self._load_ratings()
         movies  = self._load_movies()
         users   = self._load_users()
-        logger.info(
-            "Loaded  %d ratings | %d movies | %d users",
-            len(ratings), len(movies), len(users),
-        )
+        logger.info("Loaded %d ratings | %d movies | %d users",
+                    len(ratings), len(movies), len(users))
         return RawDataset(ratings=ratings, movies=movies, users=users)
 
-    # ------------------------------------------------------------------
-    # Private helpers
-    # ------------------------------------------------------------------
-
-    def _validate_dir(self):
-        required = ["ratings.dat", "movies.dat", "users.dat"]
-        missing  = [f for f in required if not (self.data_dir / f).exists()]
-        if missing:
-            raise FileNotFoundError(
-                f"Missing files in {self.data_dir}: {missing}"
-            )
-
     def _read_dat(self, filename: str, columns: list[str]) -> pd.DataFrame:
-        path = self.data_dir / filename
         return pd.read_csv(
-            path, sep="::", engine="python",
+            self.data_dir / filename, sep="::", engine="python",
             names=columns, encoding="latin-1",
         )
 
@@ -102,10 +76,8 @@ class MovieLensLoader:
 
     def _load_movies(self) -> pd.DataFrame:
         df = self._read_dat("movies.dat", self.MOVIES_COLS)
-        # Split pipe-separated genres into a list
         df["genre_list"] = df["genres"].str.split("|")
-        # Extract release year from title
-        df["year"] = df["title"].str.extract(r"\((\d{4})\)$").astype("Int32")
+        df["year"]       = df["title"].str.extract(r"\((\d{4})\)$").astype("Int32")
         return df
 
     def _load_users(self) -> pd.DataFrame:
@@ -113,3 +85,4 @@ class MovieLensLoader:
         df["age_label"]        = df["age"].map(self.AGE_MAP)
         df["occupation_label"] = df["occupation"].map(self.OCCUPATION_MAP)
         return df
+    
