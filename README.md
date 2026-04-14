@@ -23,7 +23,12 @@ cd frontend
 npm install
 ```
 
-## 5. Run dev server
+## 5. Run the Model 
+```
+python main.py
+```
+
+## 6. Run dev server
 * Run both servers in different terminals 
 ### Frontend
 ```
