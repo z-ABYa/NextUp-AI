@@ -1,0 +1,8 @@
+{
+  "short_name": "NextUp AI",
+  "name": "NextUp AI — Movie Recommendations",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

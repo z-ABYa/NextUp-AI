@@ -1,0 +1,77 @@
+/* styles/Recommendations.css */
+
+.recs-page { display: flex; flex-direction: column; gap: 24px; }
+.recs-page.empty { text-align: center; padding: 60px 0; color: #64748b; }
+
+.recs-header { text-align: center; }
+.recs-header h2 { font-size: 1.6rem; color: #c4b5fd; margin-bottom: 8px; }
+.recs-header p  { color: #94a3b8; font-size: 0.95rem; margin-bottom: 16px; }
+
+.back-btn {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid #374151;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  transition: all 0.15s;
+}
+.back-btn:hover { border-color: #7c3aed; color: #c4b5fd; }
+
+.recs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 720px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.rec-card {
+  display: flex;
+  gap: 16px;
+  background: #1e1e2e;
+  border: 1px solid #2d2d44;
+  border-radius: 12px;
+  padding: 18px;
+  transition: border-color 0.15s;
+}
+.rec-card:hover { border-color: #4c1d95; }
+
+.rec-rank {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #4c1d95;
+  min-width: 42px;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 2px;
+}
+.rec-card:nth-child(1) .rec-rank { color: #f59e0b; }
+.rec-card:nth-child(2) .rec-rank { color: #94a3b8; }
+.rec-card:nth-child(3) .rec-rank { color: #cd7c2b; }
+
+.rec-body { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+
+.rec-title  { font-size: 1.05rem; font-weight: 600; color: #e2e8f0; }
+.rec-genres { font-size: 0.8rem; color: #64748b; }
+
+.rec-scores { margin-top: 4px; display: flex; flex-direction: column; gap: 4px; }
+.rec-score-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.score-label { font-size: 0.78rem; color: #64748b; }
+.score-value { font-size: 0.85rem; font-weight: 600; color: #a78bfa; }
+
+.score-bar-wrap {
+  height: 6px;
+  background: #2d2d44;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.score-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
